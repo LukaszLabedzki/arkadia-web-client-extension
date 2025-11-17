@@ -5,6 +5,8 @@
   command = "yarn build:examples"
   # Directory to publish
   publish = "examples/dist"
+  # Functions directory
+  functions = "netlify/functions"
 
 # Set proper headers for JavaScript files to enable CORS
 [[headers]]
@@ -12,6 +14,14 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Content-Type = "application/javascript; charset=utf-8"
+
+# Proxy for RA API using Netlify Function
+# This properly handles all HTTP methods and headers
+[[redirects]]
+  from = "/api/ra/*"
+  to = "/.netlify/functions/ra-proxy/:splat"
+  status = 200
+  force = true
 
 # Redirect root to index.html
 [[redirects]]

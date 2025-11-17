@@ -47,10 +47,38 @@ try {
 // CORS - pozwól na ładowanie z dowolnego origin
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   next();
 });
+
+// Proxy dla API RA - przekierowuje /api/ra/* do https://ra.codefx.net/*
+// To pozwala uniknąć problemów z CORS
+app.use(express.json());
+
+// Use http-proxy-middleware for better proxy handling
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+app.use('/api/ra', createProxyMiddleware({
+  target: 'https://ra.codefx.net',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/ra': '', // remove /api/ra prefix
+  },
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`[Proxy] ${req.method} ${req.path} -> https://ra.codefx.net${req.path.replace('/api/ra', '')}`);
+  },
+  onProxyRes: (proxyRes, req, res) => {
+    console.log(`[Proxy] Response: ${proxyRes.statusCode}`);
+  },
+  onError: (err, req, res) => {
+    console.error('[Proxy] Error:', err.message);
+    res.status(500).json({ error: 'Proxy error', details: err.message });
+  }
+}));
 
 // Serwuj skompilowane pluginy z content-type application/javascript
 app.use('/plugins', express.static(BUILD_DIR, {
@@ -273,7 +301,7 @@ app.get('/', (req, res) => {
         'simple-highlighter-plugin': 'Prosty plugin podświetlający wybrane słowa kolorami',
         'example-plugin': 'Kompleksowy przykład demonstrujący różne funkcje',
         'combat-alert-plugin': 'Plugin do śledzenia statystyk walki z alarmami',
-        'ra-skrypty-plugin': 'RA Skrypty - automatyzacja jadalnia + info o kamieniach (/jadalnia_ra, /kamienie_info)'
+        'ra-skrypty-plugin': 'RA Skrypty v2.0 - jadalnia, kamienie, wrog, KLUCZODAJKI (/ustaw_autoryzacje_ra, /kluczodajki, /dropy, /klucze_dodaj)'
       };
       return descriptions[name] || '';
     }
@@ -313,7 +341,7 @@ function getPluginDescription(name) {
     'simple-highlighter-plugin': 'Prosty plugin podświetlający wybrane słowa kolorami',
     'example-plugin': 'Kompleksowy przykład demonstrujący różne funkcje',
     'combat-alert-plugin': 'Plugin do śledzenia statystyk walki z alarmami',
-    'ra-skrypty-plugin': 'RA Skrypty - automatyzacja jadalnia + info o kamieniach (/jadalnia_ra, /kamienie_info)'
+    'ra-skrypty-plugin': 'RA Skrypty v2.0 - jadalnia, kamienie, wrog, KLUCZODAJKI (/ustaw_autoryzacje_ra, /kluczodajki, /dropy, /klucze_dodaj)'
   };
   return descriptions[name] || '';
 }
