@@ -1,0 +1,20 @@
+# Netlify configuration for deploying example plugins
+
+[build]
+  # Build command to compile the plugins
+  command = "yarn build:examples"
+  # Directory to publish
+  publish = "examples/dist"
+
+# Set proper headers for JavaScript files to enable CORS
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/javascript; charset=utf-8"
+
+# Redirect root to index.html
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
