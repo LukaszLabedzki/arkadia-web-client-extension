@@ -273,7 +273,7 @@ app.get('/', (req, res) => {
         'simple-highlighter-plugin': 'Prosty plugin podświetlający wybrane słowa kolorami',
         'example-plugin': 'Kompleksowy przykład demonstrujący różne funkcje',
         'combat-alert-plugin': 'Plugin do śledzenia statystyk walki z alarmami',
-        'jadalnia-plugin': 'Automatyzacja jadalnia - automatyczne jedzenie i picie (/jadalnia_ra)'
+        'ra-skrypty-plugin': 'RA Skrypty - automatyzacja jadalnia + info o kamieniach (/jadalnia_ra, /kamienie_info)'
       };
       return descriptions[name] || '';
     }
@@ -313,7 +313,7 @@ function getPluginDescription(name) {
     'simple-highlighter-plugin': 'Prosty plugin podświetlający wybrane słowa kolorami',
     'example-plugin': 'Kompleksowy przykład demonstrujący różne funkcje',
     'combat-alert-plugin': 'Plugin do śledzenia statystyk walki z alarmami',
-    'jadalnia-plugin': 'Automatyzacja jadalnia - automatyczne jedzenie i picie (/jadalnia_ra)'
+    'ra-skrypty-plugin': 'RA Skrypty - automatyzacja jadalnia + info o kamieniach (/jadalnia_ra, /kamienie_info)'
   };
   return descriptions[name] || '';
 }
